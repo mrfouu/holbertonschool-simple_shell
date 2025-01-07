@@ -1,50 +1,36 @@
 #include "shell.h"
 
 /**
- * execute - Executes a command
- * @args: Array of arguments
+ * execute - Executes a command with arguments
+ * @args: An array of arguments
  */
 void execute(char **args)
 {
-	pid_t pid;
-	int status;
-	char *command_path;
+	char *path = NULL;
 
-	if (!args || !args[0])
-		return;
-
-	if (strcmp(args[0], "env") == 0)
+	if (args[0][0] == '/' || args[0][0] == '.')
 	{
-		print_env();
-		return;
-	}
-
-	command_path = find_command(args[0]);
-	if (!command_path)
-	{
-		perror("Command not found");
-		return;
-	}
-
-	pid = fork();
-	if (pid == 0)
-	{
-		if (execve(command_path, args, NULL) == -1)
-		{
-			perror("Error");
-			free(command_path);
-			exit(EXIT_FAILURE);
-		}
-	}
-	else if (pid < 0)
-	{
-		perror("Error");
+		path = strdup(args[0]);  /* Command is an absolute or relative path */
 	}
 	else
 	{
-		do {
-			waitpid(pid, &status, WUNTRACED);
-		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
+		path = find_command(args[0]);  /* Search in PATH */
 	}
-	free(command_path);
+
+	if (path)
+	{
+		if (fork() == 0)
+		{
+			execve(path, args, environ);
+			perror("Error");
+			exit(EXIT_FAILURE);
+		}
+		wait(NULL);
+		free(path);
+	}
+	else
+	{
+		perror("Command not found");
+	}
 }
+

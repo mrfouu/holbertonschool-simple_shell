@@ -1,19 +1,22 @@
 #include "shell.h"
 
 /**
- * main - Entry point for the simple shell
- * Return: Always 0
+ * main - Entry point of the shell program
+ *
+ * Return: 0 on success, -1 on error
  */
 int main(void)
 {
 	char *line = NULL;
-	char **args;
 	size_t len = 0;
 	ssize_t nread;
+	char **args = NULL;
 
 	while (1)
 	{
-		prompt();
+		if (isatty(STDIN_FILENO))
+			write(STDOUT_FILENO, "$ ", 2);
+
 		nread = getline(&line, &len, stdin);
 		if (nread == -1)
 		{
@@ -21,19 +24,22 @@ int main(void)
 			break;
 		}
 
-		args = tokenize(line);
-		if (args)
+		line[nread - 1] = '\0';  /* Remove newline */
+
+		if (strcmp(line, "exit") == 0)  /* Check for exit command */
 		{
-			if (strcmp(args[0], "exit") == 0)
-			{
-				free_tokens(args);
-				free(line);
-				break;
-			}
-			execute(args);
-			free_tokens(args);
+			free(line);
+			break;
+		}
+
+		args = tokenize(line);  /* Tokenize the input line */
+		if (args != NULL)
+		{
+			execute(args);       /* Execute the command */
+			free(args);          /* Free the tokenized arguments */
 		}
 	}
 
 	return (0);
 }
+

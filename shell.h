@@ -8,13 +8,18 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
+#include <fcntl.h>
+#include <errno.h>
 
-/* Function prototypes */
-void prompt(void);
-char **tokenize(char *line);
-void execute(char **args);
-void free_tokens(char **tokens);
+extern char **environ;
+
+/* Function Prototypes */
+void execute(char **args);  /* Ensure this prototype is present */
+void execute_command(char *command);
+char **tokenize(char *command);
 char *find_command(char *command);
 void print_env(void);
+void handle_exit(char *command);
 
 #endif /* SHELL_H */
+

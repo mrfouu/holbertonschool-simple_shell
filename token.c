@@ -1,30 +1,25 @@
 #include "shell.h"
 
 /**
- * tokenize - Splits a line into an array of tokens
- * @line: The line to split
- * Return: Array of tokens
+ * tokenize - Splits a command into arguments
+ * @command: The command to split
+ *
+ * Return: An array of arguments
  */
-char **tokenize(char *line)
+char **tokenize(char *command)
 {
 	char **tokens = NULL;
-	char *token;
+	char *token = NULL;
 	size_t i = 0, bufsize = 64;
 
 	tokens = malloc(bufsize * sizeof(char *));
 	if (!tokens)
 		return (NULL);
 
-	token = strtok(line, " \t\r\n");
-	while (token != NULL)
+	token = strtok(command, " ");
+	while (token)
 	{
-		tokens[i] = strdup(token);
-		if (!tokens[i])
-		{
-			free_tokens(tokens);
-			return (NULL);
-		}
-		i++;
+		tokens[i++] = strdup(token);
 		if (i >= bufsize)
 		{
 			bufsize += 64;
@@ -32,8 +27,9 @@ char **tokenize(char *line)
 			if (!tokens)
 				return (NULL);
 		}
-		token = strtok(NULL, " \t\r\n");
+		token = strtok(NULL, " ");
 	}
 	tokens[i] = NULL;
 	return (tokens);
 }
+

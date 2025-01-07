@@ -1,36 +1,39 @@
-#include "main.h"
+#include "shell.h"
 
-int main(int argc, char **argv)
+/**
+ * main - Entry point for the simple shell
+ * Return: Always 0
+ */
+int main(void)
 {
-    char *buf = NULL;
-    size_t count = 0;
-    ssize_t nread;
-    char **args;
+	char *line = NULL;
+	char **args;
+	size_t len = 0;
+	ssize_t nread;
 
-    (void)argc;
-    (void)argv;
+	while (1)
+	{
+		prompt();
+		nread = getline(&line, &len, stdin);
+		if (nread == -1)
+		{
+			free(line);
+			break;
+		}
 
-    while (1)
-    {
-        prompt();
+		args = tokenize(line);
+		if (args)
+		{
+			if (strcmp(args[0], "exit") == 0)
+			{
+				free_tokens(args);
+				free(line);
+				break;
+			}
+			execute(args);
+			free_tokens(args);
+		}
+	}
 
-        nread = getline(&buf, &count, stdin);
-        if (nread == -1)
-        {
-            perror("Exiting shell");
-            free(buf);
-            exit(1);
-        }
-
-        args = tokenize_input(buf);
-        if (args[0] != NULL)
-        {
-            execute_command(args);
-        }
-
-        free(args);
-    }
-
-    free(buf);
-    return 0;
+	return (0);
 }

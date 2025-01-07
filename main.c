@@ -10,13 +10,13 @@
 
 int main(int argc, char **argv)
 {
-        (void)argc, (void)argv;
         char *buf = NULL, *token;
         size_t count = 0;
         ssize_t nread;
         pid_t child_pid;
         int i, status;
         char **array;
+	(void)argc, (void)argv;
 
         while (1)
         {

@@ -1,16 +1,44 @@
 #include "shell.h"
 
 /**
- * main - Entry point of the simple shell program
+ * main - entry point of the shell
  *
- * Return: Always 0.
+ * Return: always 0
  */
 int main(void)
 {
+	char *line = NULL;
+	char **args = NULL;
+	ssize_t nread;
+	size_t len = 0;
+
 	while (1)
 	{
-		/* Display the prompt and wait for the user to enter a command */
-		prompt();
+		if (isatty(STDIN_FILENO))
+			write(STDOUT_FILENO, "$ ", 2);
+
+		nread = getline(&line, &len, stdin);
+		if (nread == -1)
+		{
+			free(line);
+			break;
+		}
+
+		line[nread - 1] = '\0';
+
+		if (strcmp(line, "exit") == 0)
+		{
+			free(line);
+			break;
+		}
+
+		args = parse_line(line);
+		if (args != NULL)
+		{
+			execute(args);
+			free(args);
+		}
 	}
+
 	return (0);
 }

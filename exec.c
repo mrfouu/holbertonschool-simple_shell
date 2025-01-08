@@ -1,51 +1,45 @@
 #include "shell.h"
 
 /**
- * execute_command - Executes the command entered by the user.
- * @command: The command to be executed.
+ * execute - Executes a command.
+ * @args: Array of arguments.
+ *
+ * Return: 1 if the shell should continue, 0 if it should terminate.
  */
-void execute_command(char *command)
+int execute(char **args)
 {
-	char *argv[2];
 	pid_t pid;
 	int status;
-	char *command_path;
+	char *command;
 
-	/* Find the command path */
-	command_path = find_command_path(command);
-	if (command_path == NULL)
+	if (args == NULL || args[0] == NULL)
+		return (1);
+
+	if (handle_builtin(args) != -1)
+		return (1);
+
+	command = find_path(args[0]);
+	if (!command)
 	{
-		fprintf(stderr, "%s: command not found\n", command);
-		return;
+		fprintf(stderr, "simple_shell: command not found: %s\n", args[0]);
+		return (1);
 	}
 
-	/* Prepare the arguments for execve */
-	argv[0] = command_path;
-	argv[1] = NULL;
-
-	/* Create a new process to execute the command */
 	pid = fork();
-	if (pid == -1)
+	if (pid == 0)
 	{
-		perror("fork");
-		free(command_path);
+		if (execve(command, args, environ) == -1)
+			perror("simple_shell");
+		free(command);
 		exit(EXIT_FAILURE);
 	}
-	else if (pid == 0)
-	{
-		/* In the child process: execute the command */
-		if (execve(argv[0], argv, NULL) == -1)
-		{
-			perror("execve");
-			free(command_path);
-			exit(EXIT_FAILURE);
-		}
-	}
+	else if (pid < 0)
+		perror("simple_shell");
 	else
-	{
-		/* In the parent process: wait for the child to finish */
-		wait(&status);
-	}
+		do {
+			waitpid(pid, &status, WUNTRACED);
+		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
 
-	free(command_path);
+	free(command);
+	return (1);
 }

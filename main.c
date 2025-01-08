@@ -1,21 +1,23 @@
 #include "shell.h"
 
 /**
- * main - entry point of the shell
+ * main - Entry point of the shell program
  *
- * Return: always 0
+ * Return: 0 on success, -1 on error
  */
 int main(void)
 {
 	char *line = NULL;
-	char **args = NULL;
-	ssize_t nread;
 	size_t len = 0;
+	ssize_t nread;
+	char **args = NULL;
 
 	while (1)
 	{
 		if (isatty(STDIN_FILENO))
+		{
 			write(STDOUT_FILENO, "$ ", 2);
+		}
 
 		nread = getline(&line, &len, stdin);
 		if (nread == -1)
@@ -24,7 +26,7 @@ int main(void)
 			break;
 		}
 
-		line[nread - 1] = '\0';
+		line[nread - 1] = '\0';  /* Remove newline */
 
 		if (strcmp(line, "exit") == 0)
 		{
@@ -32,7 +34,7 @@ int main(void)
 			break;
 		}
 
-		args = parse_line(line);
+		args = tokenize(line);
 		if (args != NULL)
 		{
 			execute(args);

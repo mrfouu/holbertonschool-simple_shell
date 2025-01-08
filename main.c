@@ -15,7 +15,9 @@ int main(void)
 	while (1)
 	{
 		if (isatty(STDIN_FILENO))
+		{
 			write(STDOUT_FILENO, "$ ", 2);
+		}
 
 		nread = getline(&line, &len, stdin);
 		if (nread == -1)
@@ -26,20 +28,19 @@ int main(void)
 
 		line[nread - 1] = '\0';  /* Remove newline */
 
-		if (strcmp(line, "exit") == 0)  /* Check for exit command */
+		if (strcmp(line, "exit") == 0)
 		{
 			free(line);
 			break;
 		}
 
-		args = tokenize(line);  /* Tokenize the input line */
+		args = tokenize(line);
 		if (args != NULL)
 		{
-			execute(args);       /* Execute the command */
-			free(args);          /* Free the tokenized arguments */
+			execute(args);
+			free(args);
 		}
 	}
 
 	return (0);
 }
-

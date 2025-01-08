@@ -6,31 +6,26 @@
  */
 void execute(char **args)
 {
-	char *path = NULL;
+	pid_t pid;
+	int status;
 
-	if (args[0][0] == '/' || args[0][0] == '.')
+	pid = fork();
+	if (pid == 0)
 	{
-		path = strdup(args[0]);  /* Command is an absolute or relative path */
-	}
-	else
-	{
-		path = find_command(args[0]);  /* Search in PATH */
-	}
-
-	if (path)
-	{
-		if (fork() == 0)
+		if (execvp(args[0], args) == -1)
 		{
-			execve(path, args, environ);
-			perror("Error");
-			exit(EXIT_FAILURE);
+			perror("execvp");
 		}
-		wait(NULL);
-		free(path);
+		exit(EXIT_FAILURE);
+	}
+	else if (pid < 0)
+	{
+		perror("fork");
 	}
 	else
 	{
-		perror("Command not found");
+		do {
+			waitpid(pid, &status, WUNTRACED);
+		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
 	}
 }
-

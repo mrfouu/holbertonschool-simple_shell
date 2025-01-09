@@ -9,9 +9,16 @@ void execute(char **args)
 	pid_t pid;
 	int status;
 
+	if (args == NULL || args[0] == NULL)
+	{
+		fprintf(stderr, "No command to execute\n");
+		return;
+	}
+
 	pid = fork();
 	if (pid == 0)
 	{
+		/** Child process*/
 		if (execvp(args[0], args) == -1)
 		{
 			perror("execvp");
@@ -20,10 +27,12 @@ void execute(char **args)
 	}
 	else if (pid < 0)
 	{
+		/** Error forking*/
 		perror("fork");
 	}
 	else
 	{
+		/** Parent process*/
 		do {
 			waitpid(pid, &status, WUNTRACED);
 		} while (!WIFEXITED(status) && !WIFSIGNALED(status));

@@ -37,14 +37,13 @@ char **tokenize(char *line)
 		token = strtok(NULL, TOKEN_DELIMITERS);
 	}
 	tokens[position] = NULL;
-	free(token);
 	return (tokens);
 }
-/**
- * free_tokens - frees the memory alocated
- * @tokens: the array of token to be free
- */
 
+/**
+ * free_tokens - frees the memory allocated
+ * @tokens: the array of tokens to be freed
+ */
 void free_tokens(char **tokens)
 {
 	free(tokens);

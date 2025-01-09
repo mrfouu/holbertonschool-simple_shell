@@ -27,13 +27,25 @@ char **tokenize(char *line)
 	{
 		tokens[position] = token;
 		position++;
+
 		if (position >= MAX_TOKENS)
 		{
 			fprintf(stderr, "Too many tokens\n");
+			free(tokens);
 			exit(EXIT_FAILURE);
 		}
 		token = strtok(NULL, TOKEN_DELIMITERS);
 	}
 	tokens[position] = NULL;
+	free(token);
 	return (tokens);
+}
+/**
+ * free_tokens - frees the memory alocated
+ * @tokens: the array of token to be free
+ */
+
+void free_tokens(char **tokens)
+{
+	free(tokens);
 }

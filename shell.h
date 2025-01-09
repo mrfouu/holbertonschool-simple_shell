@@ -9,7 +9,9 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <errno.h>
-
+#ifndef PATH_MAX
+#define PATH_MAX 4096  /* Définir PATH_MAX si elle n'est pas définie */
+#endif
 char *read_line(void);
 char **parse_line(char *line);
 void execute(char **args);

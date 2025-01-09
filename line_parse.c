@@ -1,5 +1,8 @@
 #include "shell.h"
 
+#define MAX_TOKENS 256  /* Définir un nombre maximal de tokens */
+#define TOKEN_DELIMITERS " \t\r\n\a"
+
 /**
  * tokenize - Splits a line into tokens
  * @line: The line to be tokenized
@@ -8,34 +11,28 @@
  */
 char **tokenize(char *line)
 {
-	int bufsize = 64, position = 0;
-	char **tokens = malloc(bufsize * sizeof(char *));
+	char **tokens;
 	char *token;
+	int position = 0;
 
+	tokens = malloc(MAX_TOKENS * sizeof(char *));
 	if (!tokens)
 	{
 		fprintf(stderr, "allocation error\n");
 		exit(EXIT_FAILURE);
 	}
 
-	token = strtok(line, " \t\r\n\a");
+	token = strtok(line, TOKEN_DELIMITERS);
 	while (token != NULL)
 	{
 		tokens[position] = token;
 		position++;
-
-		if (position >= bufsize)
+		if (position >= MAX_TOKENS)
 		{
-			bufsize += 64;
-			tokens = realloc(tokens, bufsize * sizeof(char *));
-			if (!tokens)
-			{
-				fprintf(stderr, "allocation error\n");
-				exit(EXIT_FAILURE);
-			}
+			fprintf(stderr, "Too many tokens\n");
+			exit(EXIT_FAILURE);
 		}
-
-		token = strtok(NULL, " \t\r\n\a");
+		token = strtok(NULL, TOKEN_DELIMITERS);
 	}
 	tokens[position] = NULL;
 	return (tokens);

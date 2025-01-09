@@ -1,0 +1,191 @@
+.TH SIMPLE_SHELL 1 "2024-12-18" "Version 1.0" "User Commands"
+
+.SH NAME
+simple_shell \- A basic Unix-like shell implementation in C
+
+.SH SYNOPSIS
+.B simple_shell
+[command]
+
+.SH DESCRIPTION
+.B simple_shell
+is a custom Unix shell implementation that provides a command-line interface for executing system commands and built-in functions. It supports both interactive and non-interactive modes of operation.
+
+.SH FEATURES
+.IP \[bu] 2
+Interactive and non-interactive shell modes
+.IP \[bu] 2
+Dynamic command line reading
+.IP \[bu] 2
+Input tokenization
+.IP \[bu] 2
+Command path resolution
+.IP \[bu] 2
+Process creation and execution
+.IP \[bu] 2
+Environment variable handling
+.IP \[bu] 2
+Customizable prompt
+.IP \[bu] 2
+Error messages for unknown commands
+.IP \[bu] 2
+Graceful handling of EOF (Ctrl+D)
+.IP \[bu] 2
+Built-in command execution without forking when unnecessary
+
+.SH BUILT-IN COMMANDS
+.TP
+.B exit
+Terminates the shell
+.TP
+.B env
+Prints all current environment variables
+.TP
+.B help
+Displays information about built-in commands and usage
+
+.SH USAGE
+.SS Interactive Mode
+Launch the shell and interact directly:
+.RS
+.B $ ./simple_shell
+.B simple_shell$ ls
+.B simple_shell$ pwd
+.B simple_shell$ exit
+.RE
+
+.SS Non-Interactive Mode
+Pipe commands or use input redirection:
+.RS
+.B $ echo "ls" | ./simple_shell
+.B $ cat commands.txt | ./simple_shell
+.RE
+
+.SS Command Execution
+.B simple_shell
+supports single-word commands with or without arguments. Commands are executed by searching the directories listed in the PATH environment variable.
+
+.SS Built-in Commands Usage
+.TP
+.B exit
+Terminates the shell session:
+.RS
+.B simple_shell$ exit
+.RE
+.TP
+.B env
+Displays the current environment variables:
+.RS
+.B simple_shell$ env
+.RE
+.TP
+.B help
+Provides help information for built-in commands:
+.RS
+.B simple_shell$ help
+.RE
+
+.SH TOKEN DELIMITERS
+The shell recognizes the following token delimiters:
+.IP \[bu] 2
+Space
+.IP \[bu] 2
+Tab (\et)
+.IP \[bu] 2
+Carriage return (\er)
+.IP \[bu] 2
+Newline (\en)
+.IP \[bu] 2
+Bell (\ea)
+
+.SH PREREQUISITES
+.IP \[bu] 2
+GNU Compiler Collection (GCC)
+.IP \[bu] 2
+UNIX-like operating system (Linux, macOS)
+.IP \[bu] 2
+Standard C libraries
+.IP \[bu] 2
+Basic understanding of Unix command-line interface
+
+.SH COMPILATION
+Compile the shell using:
+.RS
+.B gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o simple_shell
+.RE
+
+.SH LIMITATIONS
+.IP \[bu] 2
+Limited built-in command support
+.IP \[bu] 2
+Basic path resolution mechanism
+.IP \[bu] 2
+No advanced shell features like pipes or redirections
+.IP \[bu] 2
+Basic error handling
+.IP \[bu] 2
+No support for scripting or complex command chaining
+.IP \[bu] 2
+Limited customization options
+
+.SH FILE STRUCTURE
+.IP \[bu] 2
+.B shell.h
+Header file with function declarations
+.IP \[bu] 2
+.B main.c
+Entry point and mode selection
+.IP \[bu] 2
+.B exec.c
+Implementation of command execution
+.IP \[bu] 2
+.B builtins.c
+Implementation of built-in commands
+.IP \[bu] 2
+.B utils.c
+Utility functions for command parsing and error handling
+
+.SH ERROR HANDLING
+Handles various error scenarios including:
+.IP \[bu] 2
+Unknown commands
+.IP \[bu] 2
+Memory allocation failures
+.IP \[bu] 2
+Process creation errors
+.IP \[bu] 2
+Command execution errors
+.IP \[bu] 2
+Invalid input handling
+.IP \[bu] 2
+Proper error messages for debugging
+
+.SH EXAMPLES
+.TP
+Run the shell interactively:
+.RS
+.B $ ./simple_shell
+.RE
+.TP
+Execute a command with arguments:
+.RS
+.B simple_shell$ ls -l /home/user
+.RE
+.TP
+Use the built-in `env` command:
+.RS
+.B simple_shell$ env
+.RE
+.TP
+Exit the shell using the `exit` command:
+.RS
+.B simple_shell$ exit
+.RE
+
+.SH SEE ALSO
+.B sh(1), bash(1)
+
+.SH AUTHOR
+Bryan, Arnaud
+
+
